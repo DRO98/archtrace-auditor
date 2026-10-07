@@ -1,8 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, type GenerateContentResponse } from "@google/genai";
 import { mapProviderError } from "../errors";
 import { logRawResponse, parseProviderJson } from "../json";
 import { withTransientRetry } from "../retry";
-import { AiError, type AiProvider, type CompleteJsonRequest, type CompleteTextRequest, type CompleteTextResult } from "../types";
+import type { TokenUsage } from "@core/playground";
+import {
+  AiError,
+  type AiProvider,
+  type CompleteJsonRequest,
+  type CompleteJsonResult,
+  type CompleteTextRequest,
+  type CompleteTextResult,
+} from "../types";
 
 /**
  * Gemini 2.5 models spend "thinking" tokens out of maxOutputTokens. Without headroom a 2.5k budget
@@ -16,7 +24,7 @@ export function createGeminiProvider(apiKey: string, model: string): AiProvider 
   return {
     id: "gemini",
     model,
-    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<unknown> {
+    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<CompleteJsonResult> {
       try {
         const response = await withTransientRetry(
           () =>
@@ -40,7 +48,7 @@ export function createGeminiProvider(apiKey: string, model: string): AiProvider 
           const blocked = response.promptFeedback?.blockReason;
           throw new AiError("bad_response", "Gemini no devolvió texto.", blocked ? `blockReason=${blocked}` : `finishReason=${finishReason ?? "?"}`);
         }
-        return parseProviderJson(text, "gemini", finishReason);
+        return { value: parseProviderJson(text, "gemini", finishReason), usage: readUsage(response) };
       } catch (error) {
         throw mapProviderError(error, "gemini", model);
       }
@@ -68,16 +76,7 @@ export function createGeminiProvider(apiKey: string, model: string): AiProvider 
           const blocked = response.promptFeedback?.blockReason;
           throw new AiError("bad_response", "Gemini no devolvió texto.", blocked ? `blockReason=${blocked}` : `finishReason=${finishReason ?? "?"}`);
         }
-        const meta = response.usageMetadata;
-        const prompt = meta?.promptTokenCount;
-        const completion = meta?.candidatesTokenCount;
-        return {
-          text,
-          usage:
-            typeof prompt === "number" && typeof completion === "number"
-              ? { promptTokens: prompt, completionTokens: completion, totalTokens: meta?.totalTokenCount ?? prompt + completion }
-              : undefined,
-        };
+        return { text, usage: readUsage(response) };
       } catch (error) {
         throw mapProviderError(error, "gemini", model);
       }
@@ -85,3 +84,11 @@ export function createGeminiProvider(apiKey: string, model: string): AiProvider 
   };
 }
 
+function readUsage(response: GenerateContentResponse): TokenUsage | undefined {
+  const meta = response.usageMetadata;
+  const prompt = meta?.promptTokenCount;
+  const completion = meta?.candidatesTokenCount;
+  return typeof prompt === "number" && typeof completion === "number"
+    ? { promptTokens: prompt, completionTokens: completion, totalTokens: meta?.totalTokenCount ?? prompt + completion }
+    : undefined;
+}

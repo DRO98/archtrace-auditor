@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { scanDirectory } from "../src/scan/nodeScan.js";
+import { scanDirectory } from "@scanner/nodeScan";
 
 const DEFAULT_EXCLUDE = [
   "**/node_modules/**",

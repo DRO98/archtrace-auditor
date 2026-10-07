@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { createParserHost } from "./parserHost.js";
+import { prepareWasmDir } from "./wasm.js";
 import { buildProjectMap } from "./resolve.js";
-import { mkdirSync, copyFileSync } from "node:fs";
 import path from "node:path";
 
 const SOURCE = `/** Builds the greeting. */
@@ -25,14 +25,7 @@ export function App() {
 `;
 
 function wasmDir(): string {
-  const dir = path.resolve("dist/wasm");
-  mkdirSync(dir, { recursive: true });
-  copyFileSync(path.resolve("node_modules/web-tree-sitter/tree-sitter.wasm"), path.join(dir, "tree-sitter.wasm"));
-  const grammars = path.resolve("node_modules/tree-sitter-wasms/out");
-  for (const name of ["python", "javascript", "tsx"]) {
-    copyFileSync(path.join(grammars, `tree-sitter-${name}.wasm`), path.join(dir, `tree-sitter-${name}.wasm`));
-  }
-  return dir;
+  return prepareWasmDir(path.resolve("dist/wasm"));
 }
 
 describe("typescript extraction", () => {

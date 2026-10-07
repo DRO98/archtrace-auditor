@@ -297,9 +297,10 @@ test("routeSystemEdges: recta si no hay obstáculo; rodea si hay tarjeta en medi
   const path = blocked.get("e2");
   assert.ok(path && path.length > 2, `con obstáculo en medio, polilínea con codos (len=${path?.length ?? 0})`);
   const mid = { x: 280, y: 10, width: 120, height: 140 };
-  for (let index = 1; index < path!.length; index += 1) {
-    const from = path![index - 1]!;
-    const to = path![index]!;
+  const points: NonNullable<typeof path> = path!;
+  for (let index = 1; index < points.length; index += 1) {
+    const from = points[index - 1]!;
+    const to = points[index]!;
     if (from.x === to.x || from.y === to.y) {
       assert.equal(segmentHitsAny(from, to, [mid]), false, `tramo ${from.x},${from.y}→${to.x},${to.y} pisa mid`);
     }

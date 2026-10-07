@@ -1,7 +1,15 @@
 import { mapProviderError } from "../errors";
 import { logRawResponse, parseProviderJson } from "../json";
 import { parseRetryAfter, withTransientRetry } from "../retry";
-import { AiError, type AiProvider, type CompleteJsonRequest, type CompleteTextRequest, type CompleteTextResult } from "../types";
+import type { TokenUsage } from "@core/playground";
+import {
+  AiError,
+  type AiProvider,
+  type CompleteJsonRequest,
+  type CompleteJsonResult,
+  type CompleteTextRequest,
+  type CompleteTextResult,
+} from "../types";
 
 const MESSAGES_URL = "https://api.anthropic.com/v1/messages";
 const API_VERSION = "2023-06-01";
@@ -20,7 +28,7 @@ export function createAnthropicProvider(apiKey: string, model: string): AiProvid
   return {
     id: "anthropic",
     model,
-    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<unknown> {
+    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<CompleteJsonResult> {
       try {
         const body = await postMessages(
           apiKey,
@@ -34,11 +42,12 @@ export function createAnthropicProvider(apiKey: string, model: string): AiProvid
           },
           signal,
         );
+        const usage = readUsage(body);
         const tool = body.content?.find((block) => block.type === "tool_use");
-        if (tool && typeof tool.input === "object" && tool.input !== null) return tool.input;
+        if (tool && typeof tool.input === "object" && tool.input !== null) return { value: tool.input, usage };
 
         const prose = body.content?.find((block) => block.type === "text")?.text;
-        if (prose) return parseProviderJson(prose, "anthropic", body.stop_reason);
+        if (prose) return { value: parseProviderJson(prose, "anthropic", body.stop_reason), usage };
         logRawResponse("anthropic", "respuesta vacía", body, body.stop_reason);
         throw new AiError("bad_response", "Anthropic no devolvió contenido.", `stop_reason=${body.stop_reason ?? "?"}`);
       } catch (error) {
@@ -61,20 +70,20 @@ export function createAnthropicProvider(apiKey: string, model: string): AiProvid
           logRawResponse("anthropic", "respuesta vacía", body, body.stop_reason);
           throw new AiError("bad_response", "Anthropic no devolvió contenido.", `stop_reason=${body.stop_reason ?? "?"}`);
         }
-        const input = body.usage?.input_tokens;
-        const output = body.usage?.output_tokens;
-        return {
-          text,
-          usage:
-            typeof input === "number" && typeof output === "number"
-              ? { promptTokens: input, completionTokens: output, totalTokens: input + output }
-              : undefined,
-        };
+        return { text, usage: readUsage(body) };
       } catch (error) {
         throw mapProviderError(error, "anthropic", model);
       }
     },
   };
+}
+
+function readUsage(body: MessagesResponse): TokenUsage | undefined {
+  const input = body.usage?.input_tokens;
+  const output = body.usage?.output_tokens;
+  return typeof input === "number" && typeof output === "number"
+    ? { promptTokens: input, completionTokens: output, totalTokens: input + output }
+    : undefined;
 }
 
 async function postMessages(apiKey: string, payload: Record<string, unknown>, signal: AbortSignal): Promise<MessagesResponse> {

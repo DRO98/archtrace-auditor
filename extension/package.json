@@ -41,9 +41,7 @@
         },
         "archtrace.allowedOrigins": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "type": "string" },
           "default": [
             "http://localhost:3000",
             "http://127.0.0.1:3000"
@@ -90,11 +88,10 @@
     "watch": "node esbuild.js --watch",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
-    "scan:sandbox": "tsx scripts/scan-sandbox.ts",
+    "scan:sandbox": "node esbuild.js && tsx scripts/scan-sandbox.ts",
     "package": "node esbuild.js --production && node scripts/check-size.mjs"
   },
   "dependencies": {
-    "web-tree-sitter": "^0.20.8",
     "ws": "^8.21.3"
   },
   "devDependencies": {
@@ -102,7 +99,6 @@
     "@types/vscode": "~1.85.0",
     "@types/ws": "^8.18.1",
     "esbuild": "^0.28.2",
-    "tree-sitter-wasms": "^0.1.13",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

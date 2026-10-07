@@ -47,7 +47,7 @@ You may only use service ids from the catalog. Order the data flow (or query pat
 Reply with JSON only: name, description (1-2 sentences), blockIds (2-10 catalog ids, in order).`;
   const user = `${lang === "es" ? "Pedido del usuario" : "User request"}: ${input.goal}\n\n${lang === "es" ? "Catálogo" : "Catalog"}:\n${catalog}`;
 
-  const raw = await input.provider.completeJson(
+  const { value: raw } = await input.provider.completeJson(
     { system, user, schema: SCHEMA as unknown as Record<string, unknown>, schemaName: "flow_plan", maxTokens: 800 },
     input.signal,
   );

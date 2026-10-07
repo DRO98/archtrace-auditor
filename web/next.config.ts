@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   // Rutas anteriores del dashboard: los enlaces guardados siguen funcionando.
   async redirects() {
     return [
-      { source: "/dashboard", destination: "/dashboard/pipelines", permanent: false },
+      { source: "/dashboard", destination: "/dashboard/audit", permanent: false },
       { source: "/dashboard/knowledge", destination: "/dashboard/pipelines", permanent: false },
       { source: "/dashboard/knowledge-base", destination: "/dashboard/pipelines", permanent: false },
       { source: "/dashboard/api", destination: "/dashboard/api-keys", permanent: false },

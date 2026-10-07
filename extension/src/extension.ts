@@ -7,7 +7,7 @@ import { IdeStateEmitter } from "./ideState.js";
 import { discoverLocalServices } from "./localServices.js";
 import { gitDiff, gitRefs } from "./gitDiff.js";
 import { CodeNavigator } from "./navigator.js";
-import { ProjectScanner } from "./scan/scanner.js";
+import { ProjectScanner } from "./projectScanner.js";
 import { BridgeServer } from "./server.js";
 import { SourceWatcher } from "./sourceWatcher.js";
 

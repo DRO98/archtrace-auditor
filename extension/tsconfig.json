@@ -10,7 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@core/*": ["../core/src/*"]
+      "@core/*": ["../core/src/*"],
+      "@scanner/*": ["../scanner/src/*"]
     }
   },
   "include": ["src", "../core/src"]

@@ -27,7 +27,7 @@ function fakeProvider(answer: (request: CompleteJsonRequest) => unknown): AiProv
     calls,
     async completeJson(request) {
       calls.push(request);
-      return answer(request);
+      return { value: answer(request) };
     },
     async completeText() {
       throw new Error("completeText no se usa al clasificar módulos");

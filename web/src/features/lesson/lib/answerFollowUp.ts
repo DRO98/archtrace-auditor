@@ -66,7 +66,7 @@ export async function answerFollowUp(input: FollowUpInput): Promise<FollowUpRepl
     question: input.question,
   });
   const ask = async (extra: string | null): Promise<RawReply> => {
-    const raw = await input.provider.completeJson(
+    const { value: raw } = await input.provider.completeJson(
       {
         system,
         user: extra ? `${user}\n${extra}` : user,

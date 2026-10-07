@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "typecheck": "npm --prefix extension run typecheck && npm --prefix web run typecheck"
+    "install:all": "npm --prefix scanner install && npm --prefix llm install && npm --prefix auditor install && npm --prefix extension install && npm --prefix web install",
+    "typecheck": "npm --prefix scanner run typecheck && npm --prefix llm run typecheck && npm --prefix auditor run typecheck && npm --prefix extension run typecheck && npm --prefix web run typecheck",
+    "test": "npm --prefix scanner test && npm --prefix llm test && npm --prefix auditor test && npm --prefix extension test && npm --prefix web test"
   }
 }

@@ -21,3 +21,6 @@ debug.log
 *.log
 .DS_Store
 Thumbs.db
+
+# Monaco copiado desde node_modules (scripts/copy-monaco.mjs)
+web/public/monaco/
