@@ -57,23 +57,28 @@ ArchTrace es un **compañero de doble pantalla**:
 
 ```
 .
-├── core/        Tipos compartidos: protocolo WS, grafo, lecciones, simulación
-├── extension/   Extensión VS Code: servidor WS, navegador, escáner tree-sitter
-├── web/         App Next.js: lienzo, tutor, dashboard, simulación
+├── core/        Tipos compartidos y funciones puras: protocolo WS, grafo, auditoría (audit.ts)
+├── scanner/     Escáner tree-sitter (Python, JS/TS) sin VS Code — `@scanner/*`
+├── llm/         Capa LLM BYOK en Node puro (6 proveedores) — `@llm/*`
+├── auditor/     Auditor de cambios de agentes IA: CLI + API HTTP local (127.0.0.1:8090)
+├── extension/   Extensión VS Code: servidor WS, navegador, escáner del workspace
+├── web/         App Next.js: Auditorías (inicio), mapa de arquitectura, dashboard
 ├── sandbox/     Proyecto RAG en Python de ejemplo para probar el mapa
 └── docs/        Protocolo, especificación, simulación y tickets
 ```
 
-> `extension/` y `web/` **solo** se comunican por el protocolo WebSocket — ver [`docs/WEBSOCKET_PROTOCOL.md`](docs/WEBSOCKET_PROTOCOL.md).
+> `extension/` y `web/` **solo** se comunican por el protocolo WebSocket — ver [`docs/WEBSOCKET_PROTOCOL.md`](docs/WEBSOCKET_PROTOCOL.md). `web/` habla con `auditor/` **solo** por su API HTTP local — ver [`auditor/README.md`](auditor/README.md).
 
 ## 🚀 Puesta en marcha
 
 **Requisitos:** Node.js 20+, VS Code o Cursor.
 
 ```bash
-# 1. Dependencias
-npm install --prefix extension
-npm install --prefix web
+# 1. Dependencias (cada paquete tiene su node_modules)
+npm run install:all
+
+# 1b. Auditor (en otra terminal): API para la pantalla de Auditorías
+cd auditor && npm run serve
 
 # 2. Extensión (luego F5 en VS Code para lanzar el Extension Host)
 cd extension && npm run compile
@@ -109,8 +114,8 @@ ArchTrace sigue el modelo **Bring Your Own Key**: tú pones la clave (o un endpo
 ## 🧪 Tests y comprobaciones
 
 ```bash
-npm run typecheck        # extensión + web
-cd web && npm test       # tests unitarios
+npm run typecheck        # scanner + llm + auditor + extensión + web
+npm test                 # tests unitarios de todos los paquetes
 cd web && npm run graph:validate && npm run scenarios:validate
 ```
 

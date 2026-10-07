@@ -1,0 +1,19 @@
+{
+  "name": "archtrace-llm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Capa LLM BYOK en Node puro (6 proveedores, completeJson con JSON Schema). La consumen el web (`@llm/*`, re-exportado en web/src/lib/ai) y el auditor.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@google/genai": "2.24.0",
+    "openai": "7.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

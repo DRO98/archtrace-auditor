@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import path from "node:path";
+import { isSafeRef } from "@core/gitRef";
 import type { GitCommitRef, GitDiffPayload, GitFileChange, GitRefsPayload } from "@core/protocol";
 
 /**
@@ -14,12 +15,7 @@ const MAX_FILES = 2000;
 const MAX_COMMITS = 30;
 const MAX_BRANCHES = 100;
 
-/** Rama, tag, SHA o expresiones simples (`HEAD~3`, `origin/main`). */
-const REF = /^(?!-)[A-Za-z0-9._/@~^{}-]{1,200}$/;
-
-export function isSafeRef(ref: string): boolean {
-  return REF.test(ref) && !ref.includes("..") && !ref.includes("@{");
-}
+export { isSafeRef };
 
 export type GitRunner = (args: readonly string[], cwd: string) => Promise<string>;
 

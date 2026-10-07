@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
-import { isPipelineEditorPath } from "@/features/dashboard/routes";
+import { DASHBOARD_ROUTES, isPipelineEditorPath } from "@/features/dashboard/routes";
 import { cn } from "@/lib/cn";
 import { IDE_OPTIONS, isAbsoluteRoot, type IdeId, type IdeSetup } from "../lib/ideSetup";
 import { useIdeSetup } from "../lib/useIdeSetup";
@@ -12,16 +12,20 @@ const ENV_ROOT = process.env.NEXT_PUBLIC_PROJECT_ROOT ?? "";
 
 /**
  * Modal global de conexión con el IDE. Nunca se pinta dentro del editor de pipelines: allí taparía
- * el zoom y las herramientas del lienzo (la barra del lienzo manda a Ajustes y Plan).
+ * el zoom y las herramientas del lienzo (la barra del lienzo manda a Ajustes y Plan). Tampoco se abre solo en
+ * Auditorías.
  */
 export function IDESetupModal() {
   const { setup, hydrated, open, save, setOpen } = useIdeSetup();
-  const inEditor = isPipelineEditorPath(usePathname());
+  const pathname = usePathname();
+  const inEditor = isPipelineEditorPath(pathname);
+  // Auditorías abre el IDE con la raíz del repo auditado: no necesita este asistente al entrar.
+  const autoOpen = !inEditor && !pathname.startsWith(DASHBOARD_ROUTES.audit);
 
   useEffect(() => {
-    if (!hydrated || inEditor) return;
+    if (!hydrated || !autoOpen) return;
     if (!setup) setOpen(true);
-  }, [hydrated, inEditor, setup, setOpen]);
+  }, [hydrated, autoOpen, setup, setOpen]);
 
   // El diálogo se monta al abrirse: su borrador parte siempre de lo guardado, sin sincronizarlo con un efecto.
   if (!open || inEditor) return null;

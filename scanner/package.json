@@ -1,0 +1,19 @@
+{
+  "name": "archtrace-scanner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Escáner tree-sitter (Python, JS/TS/TSX) sin dependencias de VS Code. Lo consumen la extensión y el auditor vía `@scanner/*`.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "web-tree-sitter": "0.20.8",
+    "tree-sitter-wasms": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,21 +1,14 @@
 import assert from "node:assert/strict";
-import { mkdirSync, copyFileSync } from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
 import type { ProjectMap } from "@core/projectMap";
 import { createParserHost } from "./parserHost.js";
 import { buildProjectMap } from "./resolve.js";
 import { scanDirectory } from "./nodeScan.js";
+import { prepareWasmDir } from "./wasm.js";
 
 function wasmDir(): string {
-  const dir = path.resolve("dist/wasm");
-  mkdirSync(dir, { recursive: true });
-  copyFileSync(path.resolve("node_modules/web-tree-sitter/tree-sitter.wasm"), path.join(dir, "tree-sitter.wasm"));
-  const grammars = path.resolve("node_modules/tree-sitter-wasms/out");
-  for (const name of ["python", "javascript", "tsx"]) {
-    copyFileSync(path.join(grammars, `tree-sitter-${name}.wasm`), path.join(dir, `tree-sitter-${name}.wasm`));
-  }
-  return dir;
+  return prepareWasmDir(path.resolve("dist/wasm"));
 }
 
 describe("python workspace map", () => {

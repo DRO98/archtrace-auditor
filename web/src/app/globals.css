@@ -138,3 +138,21 @@ body {
 [data-presentation] .react-flow__edge-textwrapper {
   font-size: 13px;
 }
+
+/* Auditor: decoraciones del visor de diff (Monaco) por criticidad. Globales porque Monaco las aplica por nombre. */
+.audit-range-critical { background: rgb(225 29 72 / 0.10); }
+.audit-range-high { background: rgb(245 158 11 / 0.12); }
+.audit-range-medium { background: rgb(14 165 233 / 0.10); }
+.audit-range-low { background: rgb(100 116 139 / 0.08); }
+.audit-range-unknown { background: rgb(13 148 136 / 0.10); }
+.audit-evidence-critical { background: rgb(225 29 72 / 0.22); }
+.audit-evidence-high { background: rgb(245 158 11 / 0.25); }
+.audit-evidence-medium { background: rgb(14 165 233 / 0.20); }
+.audit-evidence-low { background: rgb(100 116 139 / 0.16); }
+.audit-evidence-unknown { background: rgb(13 148 136 / 0.20); }
+.audit-glyph { border-radius: 9999px; margin-left: 6px; margin-top: 5px; width: 8px !important; height: 8px !important; }
+.audit-glyph-critical { background: #e11d48; }
+.audit-glyph-high { background: #f59e0b; }
+.audit-glyph-medium { background: #0ea5e9; }
+.audit-glyph-low { background: #64748b; }
+.audit-glyph-unknown { background: #0d9488; }

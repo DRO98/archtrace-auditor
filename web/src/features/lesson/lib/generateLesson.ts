@@ -70,7 +70,7 @@ async function selectSlice(input: GenerateLessonInput) {
   const outline = buildOutline(input.map, input.goal, input.map.files.length > 600 ? 80 : input.map.files.length);
   let files = rankFiles(input.map, input.goal).slice(0, 8);
   try {
-    const raw = await input.provider.completeJson(
+    const { value: raw } = await input.provider.completeJson(
       {
         system: buildSelectorSystemPrompt(),
         user: buildSelectorUserMessage(input.goal, outline),
@@ -99,7 +99,7 @@ function parseSelector(raw: unknown, map: ProjectMap): string[] | null {
 }
 
 async function completeLesson(provider: AiProvider, system: string, user: string, signal: AbortSignal): Promise<unknown> {
-  const raw = await provider.completeJson(
+  const { value: raw } = await provider.completeJson(
     { system, user, schema: LESSON_JSON_SCHEMA, schemaName: "lesson", maxTokens: MAX_TOKENS },
     signal,
   );

@@ -111,7 +111,7 @@ export async function classifyModulesWithAI(
   if (files.length === 0) return result;
   if (files.length > MAX_BATCH) throw new AiError("bad_response", `Lote demasiado grande (${files.length} > ${MAX_BATCH}).`);
 
-  const raw = await provider.completeJson(
+  const { value: raw } = await provider.completeJson(
     {
       system: SYSTEM_PROMPT,
       user: buildClassifierUserMessage(files),

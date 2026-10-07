@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import {
   KeyRound,
+  Network,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
-  Zap,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import { useResolvedAi } from "@/features/canvas/lib/useResolvedAi";
@@ -18,15 +19,21 @@ import { cn } from "@/lib/cn";
 import { BrandMark, PRODUCT_NAME } from "./BrandMark";
 import { DASHBOARD_ROUTES, isPipelineEditorPath } from "./routes";
 
-type NavId = "pipelines" | "api" | "settings";
+type NavId = "audit" | "pipelines" | "api" | "settings";
 
-const NAV_ITEMS: readonly { id: NavId; href: string; label: string; icon: LucideIcon }[] = [
-  { id: "pipelines", href: DASHBOARD_ROUTES.pipelines, label: "Pipelines", icon: Zap },
+/**
+ * Auditorías es la pantalla principal. El tutor visual heredado (lienzo, simulación, playground, demos) sigue
+ * accesible como "Mapa de arquitectura", en el grupo secundario.
+ */
+const NAV_ITEMS: readonly { id: NavId; href: string; label: string; icon: LucideIcon; secondary?: boolean }[] = [
+  { id: "audit", href: DASHBOARD_ROUTES.audit, label: "Auditorías", icon: ShieldCheck },
   { id: "api", href: DASHBOARD_ROUTES.api, label: "API & Integración", icon: KeyRound },
-  { id: "settings", href: DASHBOARD_ROUTES.settings, label: "Ajustes y Plan", icon: Settings },
+  { id: "settings", href: DASHBOARD_ROUTES.settings, label: "Ajustes", icon: Settings },
+  { id: "pipelines", href: DASHBOARD_ROUTES.pipelines, label: "Mapa de arquitectura", icon: Network, secondary: true },
 ];
 
 function activeItem(pathname: string): NavId {
+  if (pathname.startsWith(DASHBOARD_ROUTES.audit)) return "audit";
   if (pathname.startsWith(DASHBOARD_ROUTES.api)) return "api";
   if (pathname.startsWith(DASHBOARD_ROUTES.settings)) return "settings";
   return "pipelines";
@@ -106,12 +113,12 @@ export function GlobalSidebar() {
       </div>
 
       <ul className="flex flex-col gap-1">
-        {NAV_ITEMS.map(({ id, href, label, icon: Icon }) => {
+        {NAV_ITEMS.map(({ id, href, label, icon: Icon, secondary }) => {
           const active = current === id;
           const badge = id === "api" && aiMissing;
           const title = badge ? `${label} (IA sin configurar)` : label;
           return (
-            <li key={id}>
+            <li key={id} className={cn(secondary && "mt-3 border-t border-edge pt-3")}>
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}

@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import type { TokenUsage } from "@core/playground";
 import { mapProviderError } from "../errors";
 import { logRawResponse, parseProviderJson } from "../json";
 import {
@@ -6,6 +7,7 @@ import {
   type AiProvider,
   type AiProviderId,
   type CompleteJsonRequest,
+  type CompleteJsonResult,
   type CompleteTextRequest,
   type CompleteTextResult,
 } from "../types";
@@ -36,7 +38,7 @@ export function createOpenAiCompatibleProvider(options: OpenAiCompatibleOptions)
   return {
     id,
     model,
-    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<unknown> {
+    async completeJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<CompleteJsonResult> {
       try {
         return await requestJson(request, signal);
       } catch (error) {
@@ -46,7 +48,7 @@ export function createOpenAiCompatibleProvider(options: OpenAiCompatibleOptions)
         const failed = readFailedGeneration(error);
         if (failed) {
           try {
-            return parseProviderJson(failed, id, "length");
+            return { value: parseProviderJson(failed, id, "length") };
           } catch {
             // No se pudo reparar: se reintenta abajo.
           }
@@ -68,7 +70,7 @@ export function createOpenAiCompatibleProvider(options: OpenAiCompatibleOptions)
           const choice = completion.choices[0];
           const text = choice?.message.content;
           if (!text) throw new AiError("bad_response", "La IA no devolvió texto.", `finish_reason=${choice?.finish_reason ?? "?"}`);
-          return parseProviderJson(text, id, choice.finish_reason);
+          return { value: parseProviderJson(text, id, choice.finish_reason), usage: readUsage(completion.usage) };
         } catch (retryError) {
           throw mapProviderError(retryError, id, model);
         }
@@ -96,20 +98,14 @@ export function createOpenAiCompatibleProvider(options: OpenAiCompatibleOptions)
             choice?.message.refusal ?? `finish_reason=${choice?.finish_reason ?? "?"}`,
           );
         }
-        const usage = completion.usage;
-        return {
-          text,
-          usage: usage
-            ? { promptTokens: usage.prompt_tokens, completionTokens: usage.completion_tokens, totalTokens: usage.total_tokens }
-            : undefined,
-        };
+        return { text, usage: readUsage(completion.usage) };
       } catch (error) {
         throw mapProviderError(error, id, model);
       }
     },
   };
 
-  async function requestJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<unknown> {
+  async function requestJson(request: CompleteJsonRequest, signal: AbortSignal): Promise<CompleteJsonResult> {
     const completion = await client.chat.completions.create(
       strictSchema
         ? {
@@ -148,8 +144,12 @@ ${jsonInstruction(request)}`,
       const refusal = choice?.message.refusal;
       throw new AiError("bad_response", "La IA no devolvió texto.", refusal ?? `finish_reason=${choice?.finish_reason ?? "?"}`);
     }
-    return parseProviderJson(text, id, choice.finish_reason);
+    return { value: parseProviderJson(text, id, choice.finish_reason), usage: readUsage(completion.usage) };
   }
+}
+
+function readUsage(usage: OpenAI.CompletionUsage | undefined | null): TokenUsage | undefined {
+  return usage ? { promptTokens: usage.prompt_tokens, completionTokens: usage.completion_tokens, totalTokens: usage.total_tokens } : undefined;
 }
 
 /** Cuerpo de error del SDK de OpenAI (`APIError.error`); algunos proveedores lo anidan en `error.error`. */

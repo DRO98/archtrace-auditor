@@ -9,13 +9,18 @@ WORKDIR /app
 # --- Dependencies ---
 FROM base AS deps
 COPY web/package.json web/package-lock.json ./web/
+COPY llm/package.json llm/package-lock.json ./llm/
+# `llm/` (capa BYOK compartida con el auditor) trae sus propias dependencias (openai, @google/genai).
+RUN cd /app/llm && npm ci --omit=dev
 WORKDIR /app/web
 RUN npm ci
 
 # --- Build ---
 FROM base AS builder
 COPY --from=deps /app/web/node_modules ./web/node_modules
+COPY --from=deps /app/llm/node_modules ./llm/node_modules
 COPY core ./core
+COPY llm ./llm
 COPY web ./web
 WORKDIR /app/web
 
@@ -44,7 +49,7 @@ ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-# standalone + tracing root → layout: /app/web/server.js (+ core trazado)
+# standalone + tracing root → layout: /app/web/server.js (+ core y llm trazados)
 COPY --from=builder /app/web/public ./web/public
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static

@@ -81,7 +81,7 @@ function fakeProvider(replies: unknown[]): AiProvider & { requests: CompleteJson
       requests.push(request);
       const next = replies.shift();
       if (next === undefined) throw new Error("sin más respuestas");
-      return next;
+      return { value: next };
     },
     completeText: async () => {
       throw new Error("no se usa");

@@ -2,6 +2,10 @@
 #
 #   cd web && docker compose up -d --build
 #
+# RAG vectorial del auditor (opcional): Qdrant solo en loopback.
+#   cd web && docker compose --profile rag up -d qdrant
+#   ollama pull nomic-embed-text      # embeddings locales (Ollama en el host)
+#
 # Claves API: copia .env.example → .env (nunca se suben a la imagen).
 # Ollama en el host: OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
 
@@ -42,3 +46,21 @@ services:
       - no-new-privileges:true
     # Sin volúmenes persistentes: el contenedor no guarda código, chats ni claves.
     # BYOK del navegador → localStorage; claves opcionales del servidor → solo env en memoria.
+
+  # Índice vectorial del auditor (`auditor/`): secciones de reglas y firmas de símbolos, embebidas en local con
+  # Ollama. Solo arranca con `--profile rag`. A diferencia del web, guarda datos (el índice) en un volumen:
+  # se puede borrar sin perder nada, el auditor lo reconstruye.
+  qdrant:
+    image: qdrant/qdrant:v1.19.2
+    container_name: archtrace-qdrant
+    profiles: ["rag"]
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  qdrant_data:

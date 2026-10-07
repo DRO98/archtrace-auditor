@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@core/*": ["../core/src/*"]
+      "@core/*": ["../core/src/*"],
+      "@llm/*": ["../llm/src/*"]
     }
   },
   "include": [

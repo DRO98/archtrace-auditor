@@ -5,3 +5,4 @@ export type * from "./lesson.js";
 export type * from "./simulation.js";
 export type * from "./playground.js";
 export type * from "./trace.js";
+export type * from "./audit.js";

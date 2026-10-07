@@ -5,13 +5,17 @@ const path = require("path");
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
 
+/** `@core/*` y `@scanner/*` → fuentes TS de los paquetes hermanos (sin build propio). */
+const ALIASES = { "@core/": path.join(__dirname, "..", "core", "src"), "@scanner/": path.join(__dirname, "..", "scanner", "src") };
+
 /** @type {import("esbuild").Plugin} */
-const coreAlias = {
-  name: "core-alias",
+const monorepoAlias = {
+  name: "monorepo-alias",
   setup(build) {
-    build.onResolve({ filter: /^@core\// }, (args) => ({
-      path: path.join(__dirname, "..", "core", "src", `${args.path.slice("@core/".length)}.ts`),
-    }));
+    build.onResolve({ filter: /^@(core|scanner)\// }, (args) => {
+      const prefix = Object.keys(ALIASES).find((key) => args.path.startsWith(key));
+      return { path: path.join(ALIASES[prefix], `${args.path.slice(prefix.length)}.ts`) };
+    });
   },
 };
 
@@ -28,7 +32,7 @@ async function main() {
     minify: production,
     sourcemap: production ? false : true,
     legalComments: production ? "none" : "inline",
-    plugins: [coreAlias],
+    plugins: [monorepoAlias],
     logLevel: "info",
   };
 
@@ -45,11 +49,10 @@ async function main() {
 function copyWasm() {
   const target = path.join(__dirname, "dist", "wasm");
   fs.mkdirSync(target, { recursive: true });
-  fs.copyFileSync(
-    path.join(__dirname, "node_modules", "web-tree-sitter", "tree-sitter.wasm"),
-    path.join(target, "tree-sitter.wasm"),
-  );
-  const grammars = path.join(__dirname, "node_modules", "tree-sitter-wasms", "out");
+  // Mismo `web-tree-sitter` que se empaqueta: el del paquete `scanner/`.
+  const modules = path.join(__dirname, "..", "scanner", "node_modules");
+  fs.copyFileSync(path.join(modules, "web-tree-sitter", "tree-sitter.wasm"), path.join(target, "tree-sitter.wasm"));
+  const grammars = path.join(modules, "tree-sitter-wasms", "out");
   for (const name of ["python", "javascript", "tsx"]) {
     fs.copyFileSync(path.join(grammars, `tree-sitter-${name}.wasm`), path.join(target, `tree-sitter-${name}.wasm`));
   }

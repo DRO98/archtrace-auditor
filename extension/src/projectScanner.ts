@@ -2,10 +2,10 @@ import path from "node:path";
 import * as vscode from "vscode";
 import type { ProjectMap } from "@core/projectMap";
 import { selectTopSources } from "@core/rankSources";
-import { readSetting } from "../settings.js";
-import { grammarFor, createParserHost, type ParserHost } from "./parserHost.js";
-import { buildProjectMap } from "./resolve.js";
-import type { RawFile } from "./types.js";
+import { grammarFor, createParserHost, type ParserHost } from "@scanner/parserHost";
+import { buildProjectMap } from "@scanner/resolve";
+import type { RawFile } from "@scanner/types";
+import { readSetting } from "./settings.js";
 
 const DEFAULT_EXCLUDE = [
   "**/node_modules/**",
