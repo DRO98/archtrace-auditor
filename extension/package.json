@@ -1,0 +1,109 @@
+{
+  "name": "archtrace-extension",
+  "displayName": "ArchTrace",
+  "publisher": "archtrace",
+  "description": "Local WebSocket bridge between VS Code and the ArchTrace architecture canvas.",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "archtrace.restartServer",
+        "title": "ArchTrace: Restart Server"
+      },
+      {
+        "command": "archtrace.showStatus",
+        "title": "ArchTrace: Show Status"
+      },
+      {
+        "command": "archtrace.scanWorkspace",
+        "title": "ArchTrace: Scan Workspace"
+      }
+    ],
+    "configuration": {
+      "title": "ArchTrace",
+      "properties": {
+        "archtrace.port": {
+          "type": "number",
+          "default": 8080,
+          "description": "Port for the local WebSocket server."
+        },
+        "archtrace.host": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "description": "Host for the local WebSocket server. Keep this on the loopback interface."
+        },
+        "archtrace.allowedOrigins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000"
+          ],
+          "description": "Browser Origin values allowed to open a WebSocket connection."
+        },
+        "archtrace.scan.maxFiles": {
+          "type": "number",
+          "default": 400,
+          "description": "Maximum number of source files indexed in one scan."
+        },
+        "archtrace.scan.maxFileBytes": {
+          "type": "number",
+          "default": 524288,
+          "description": "Skip source files larger than this many bytes."
+        },
+        "archtrace.scan.exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/.next/**",
+            "**/__pycache__/**",
+            "**/.venv/**",
+            "**/venv/**",
+            "**/*.min.js",
+            "**/*.d.ts",
+            "**/__tests__/**",
+            "**/*.test.*",
+            "**/*.spec.*",
+            "**/tests/**",
+            "**/test_*.py"
+          ],
+          "description": "Glob patterns skipped by the workspace scanner."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
+    "scan:sandbox": "tsx scripts/scan-sandbox.ts",
+    "package": "node esbuild.js --production && node scripts/check-size.mjs"
+  },
+  "dependencies": {
+    "web-tree-sitter": "^0.20.8",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "@types/vscode": "~1.85.0",
+    "@types/ws": "^8.18.1",
+    "esbuild": "^0.28.2",
+    "tree-sitter-wasms": "^0.1.13",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

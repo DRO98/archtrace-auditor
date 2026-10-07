@@ -1,0 +1,424 @@
+{
+  "version": 1,
+  "graph": "macro_rag_project",
+  "scenarios": [
+    {
+      "id": "ingest-document",
+      "name": "Guardar un documento",
+      "description": "Qué ocurre desde que llega un documento nuevo hasta que queda guardado y listo para responder preguntas.",
+      "entryNodeId": "src/api/routes.py",
+      "steps": [
+        {
+          "stepIndex": 0,
+          "nodeId": "src/api/routes.py",
+          "title": "Llega un documento nuevo",
+          "description": "La puerta de entrada de la aplicación recibe el título y el texto de un documento. Lo primero que hace es inventar un nombre corto y único (un «identificador») para poder encontrarlo después.",
+          "fileReference": {
+            "path": "src/api/routes.py",
+            "lineStart": 27,
+            "lineEnd": 35,
+            "functionName": "ingest_document"
+          },
+          "mockPayload": {
+            "input": {
+              "title": "Guía de bienvenida",
+              "body": "ArchTrace explica código con rutas guiadas paso a paso."
+            },
+            "output": {
+              "document_id": "guia-de-bienvenida",
+              "body": "ArchTrace explica código con rutas guiadas paso a paso."
+            }
+          },
+          "edgeIdToNext": "imports:src/api/routes.py:src/rag/pipeline.py",
+          "metrics": {
+            "latencyMs": 12,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 1
+          }
+        },
+        {
+          "stepIndex": 1,
+          "nodeId": "src/rag/pipeline.py",
+          "title": "El coordinador toma el mando",
+          "description": "Este componente dirige la ingesta: pide partir el texto, convertir cada trozo en números y guardarlo. Por sí mismo no hace el trabajo pesado; reparte tareas entre los demás.",
+          "fileReference": {
+            "path": "src/rag/pipeline.py",
+            "lineStart": 19,
+            "lineEnd": 32,
+            "functionName": "RagPipeline.ingest"
+          },
+          "mockPayload": {
+            "input": {
+              "document_id": "guia-de-bienvenida",
+              "text": "ArchTrace explica código con rutas guiadas paso a paso."
+            },
+            "output": {
+              "text": "ArchTrace explica código con rutas guiadas paso a paso.",
+              "size": 240
+            }
+          },
+          "edgeIdToNext": "imports:src/rag/pipeline.py:src/rag/chunker.py",
+          "metrics": {
+            "latencyMs": 35,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.95
+          }
+        },
+        {
+          "stepIndex": 2,
+          "nodeId": "src/rag/chunker.py",
+          "title": "El texto se parte en trozos",
+          "description": "Los textos largos se cortan en trozos pequeños que se solapan un poco. Así cada trozo cabe en la memoria del modelo y no se pierde el contexto en los cortes.",
+          "fileReference": {
+            "path": "src/rag/chunker.py",
+            "lineStart": 11,
+            "lineEnd": 35,
+            "functionName": "chunk_text"
+          },
+          "mockPayload": {
+            "input": {
+              "text": "ArchTrace explica código con rutas guiadas paso a paso.",
+              "size": 240,
+              "overlap": 40
+            },
+            "output": {
+              "chunks": [
+                "ArchTrace explica código con rutas guiadas paso a paso."
+              ]
+            }
+          },
+          "metrics": {
+            "latencyMs": 48,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.9
+          }
+        },
+        {
+          "stepIndex": 3,
+          "nodeId": "src/rag/embeddings.py",
+          "title": "Cada trozo se convierte en números",
+          "description": "Un ordenador no entiende frases, pero sí números. Este componente transforma cada trozo en una lista de números (un «vector») que representa su contenido. Este paso se repite por cada trozo.",
+          "fileReference": {
+            "path": "src/rag/embeddings.py",
+            "lineStart": 28,
+            "lineEnd": 44,
+            "functionName": "Embedder.embed"
+          },
+          "mockPayload": {
+            "input": "ArchTrace explica código con rutas guiadas paso a paso.",
+            "output": {
+              "dimensions": 32,
+              "vector": [
+                0,
+                0.14,
+                0,
+                0.29,
+                0.07,
+                0,
+                0.21,
+                0.29
+              ]
+            }
+          },
+          "metrics": {
+            "latencyMs": 180,
+            "tokenCount": {
+              "prompt": 14,
+              "generation": 0
+            },
+            "contextScore": 0.88
+          }
+        },
+        {
+          "stepIndex": 4,
+          "nodeId": "src/rag/vector_store.py",
+          "title": "Se guarda en la base vectorial",
+          "description": "La lista de números se guarda junto con el texto original, como una ficha en un archivador. Más tarde servirá para encontrar textos parecidos a una pregunta.",
+          "fileReference": {
+            "path": "src/rag/vector_store.py",
+            "lineStart": 33,
+            "lineEnd": 36,
+            "functionName": "VectorStore.upsert"
+          },
+          "mockPayload": {
+            "input": {
+              "record_id": "guia-de-bienvenida:0",
+              "values": [
+                0,
+                0.14,
+                0,
+                0.29,
+                0.07,
+                0,
+                0.21,
+                0.29
+              ],
+              "source": "guia-de-bienvenida"
+            },
+            "output": {
+              "stored": true,
+              "total_records": 1
+            }
+          },
+          "metrics": {
+            "latencyMs": 95,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.88
+          }
+        }
+      ]
+    },
+    {
+      "id": "answer-question",
+      "name": "Responder una pregunta",
+      "description": "El recorrido completo de una pregunta: cómo se buscan pistas en lo guardado y cómo se redacta la respuesta.",
+      "entryNodeId": "src/api/routes.py",
+      "steps": [
+        {
+          "stepIndex": 0,
+          "nodeId": "src/api/routes.py",
+          "title": "Llega una pregunta",
+          "description": "El usuario escribe una pregunta. La puerta de entrada la limpia (quita espacios de más) y se la pasa al coordinador para que busque información.",
+          "fileReference": {
+            "path": "src/api/routes.py",
+            "lineStart": 38,
+            "lineEnd": 51,
+            "functionName": "ask_question"
+          },
+          "mockPayload": {
+            "input": {
+              "question": "  ¿Qué hace   ArchTrace? "
+            },
+            "output": {
+              "question": "¿Qué hace ArchTrace?"
+            }
+          },
+          "edgeIdToNext": "imports:src/api/routes.py:src/rag/pipeline.py",
+          "metrics": {
+            "latencyMs": 8,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 1
+          }
+        },
+        {
+          "stepIndex": 1,
+          "nodeId": "src/rag/pipeline.py",
+          "title": "El coordinador busca pistas",
+          "description": "Antes de responder hay que encontrar qué partes de los documentos guardados se parecen a la pregunta. El coordinador pide ayuda a otros dos componentes.",
+          "fileReference": {
+            "path": "src/rag/pipeline.py",
+            "lineStart": 34,
+            "lineEnd": 38,
+            "functionName": "RagPipeline.retrieve"
+          },
+          "mockPayload": {
+            "input": {
+              "question": "¿Qué hace ArchTrace?",
+              "limit": 4
+            },
+            "output": {
+              "text": "¿Qué hace ArchTrace?"
+            }
+          },
+          "edgeIdToNext": "imports:src/rag/pipeline.py:src/rag/embeddings.py",
+          "metrics": {
+            "latencyMs": 22,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.9
+          }
+        },
+        {
+          "stepIndex": 2,
+          "nodeId": "src/rag/embeddings.py",
+          "title": "La pregunta también se convierte en números",
+          "description": "La pregunta pasa por el mismo «traductor a números» que usaron los documentos. Así se pueden comparar en igualdad de condiciones.",
+          "fileReference": {
+            "path": "src/rag/embeddings.py",
+            "lineStart": 28,
+            "lineEnd": 44,
+            "functionName": "Embedder.embed"
+          },
+          "mockPayload": {
+            "input": "¿Qué hace ArchTrace?",
+            "output": {
+              "dimensions": 32,
+              "vector": [
+                0,
+                0.14,
+                0,
+                0.29,
+                0.07,
+                0,
+                0.21,
+                0.29
+              ]
+            }
+          },
+          "metrics": {
+            "latencyMs": 140,
+            "tokenCount": {
+              "prompt": 9,
+              "generation": 0
+            },
+            "contextScore": 0.85
+          }
+        },
+        {
+          "stepIndex": 3,
+          "nodeId": "src/rag/vector_store.py",
+          "title": "Se buscan los textos más parecidos",
+          "description": "La base vectorial compara los números de la pregunta con los de cada trozo guardado y se queda con los más parecidos. Es como buscar en un archivador por parecido y no por título.",
+          "fileReference": {
+            "path": "src/rag/vector_store.py",
+            "lineStart": 56,
+            "lineEnd": 68,
+            "functionName": "VectorStore.search"
+          },
+          "mockPayload": {
+            "input": {
+              "query": [
+                0,
+                0.14,
+                0,
+                0.29,
+                0.07,
+                0,
+                0.21,
+                0.29
+              ],
+              "limit": 4
+            },
+            "output": {
+              "hits": [
+                {
+                  "text": "ArchTrace explica código con rutas guiadas paso a paso.",
+                  "score": 0.83
+                },
+                {
+                  "text": "Otro fragmento menos relacionado.",
+                  "score": 0.41
+                }
+              ]
+            }
+          },
+          "edgeIdToNext": "imports:src/rag/pipeline.py:src/rag/vector_store.py",
+          "metrics": {
+            "latencyMs": 320,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.62
+          }
+        },
+        {
+          "stepIndex": 4,
+          "nodeId": "src/rag/pipeline.py",
+          "title": "Se prepara el mensaje para la IA",
+          "description": "Con los textos encontrados se arma un mensaje: la pregunta más el material de apoyo. Es como darle a un experto los apuntes justos antes de preguntarle.",
+          "fileReference": {
+            "path": "src/rag/pipeline.py",
+            "lineStart": 40,
+            "lineEnd": 43,
+            "functionName": "RagPipeline.answer"
+          },
+          "mockPayload": {
+            "input": {
+              "question": "¿Qué hace ArchTrace?",
+              "context": "(0.83) ArchTrace explica código con rutas guiadas paso a paso."
+            },
+            "output": {
+              "prompt": "Question: ¿Qué hace ArchTrace?\nContext:\n(0.83) ArchTrace explica código con rutas guiadas paso a paso."
+            }
+          },
+          "edgeIdToNext": "imports:src/rag/pipeline.py:src/llm/service.py",
+          "metrics": {
+            "latencyMs": 15,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 0
+            },
+            "contextScore": 0.83
+          }
+        },
+        {
+          "stepIndex": 5,
+          "nodeId": "src/llm/service.py",
+          "title": "El modelo redacta la respuesta",
+          "description": "El modelo de lenguaje recibe el mensaje y escribe la respuesta. En este proyecto de ejemplo es un modelo de juguete que solo repite parte del mensaje; en una aplicación real aquí estaría una IA como Claude o GPT.",
+          "fileReference": {
+            "path": "src/llm/service.py",
+            "lineStart": 18,
+            "lineEnd": 26,
+            "functionName": "LlmService.complete"
+          },
+          "mockPayload": {
+            "input": {
+              "prompt": "Question: ¿Qué hace ArchTrace?\nContext:\n(0.83) ArchTrace explica código con rutas guiadas paso a paso."
+            },
+            "output": "[sandbox] 88 chars :: Question: ¿Qué hace ArchTrace? Context: (0.83) ArchTrace explica código con rutas guiadas paso a paso."
+          },
+          "metrics": {
+            "latencyMs": 1350,
+            "tokenCount": {
+              "prompt": 64,
+              "generation": 48
+            },
+            "contextScore": 0.83
+          }
+        },
+        {
+          "stepIndex": 6,
+          "nodeId": "src/llm/service.py",
+          "title": "La respuesta llega palabra a palabra",
+          "description": "La respuesta se trocea en palabras para mostrarla poco a poco en pantalla, como cuando alguien escribe en directo. Al final, la API devuelve el texto completo al usuario.",
+          "fileReference": {
+            "path": "src/llm/service.py",
+            "lineStart": 29,
+            "lineEnd": 40,
+            "functionName": "stream_tokens"
+          },
+          "mockPayload": {
+            "input": "[sandbox] 88 chars :: Question: ¿Qué hace ArchTrace? …",
+            "output": {
+              "tokens": [
+                "[sandbox] ",
+                "88 ",
+                "chars ",
+                ":: ",
+                "Question: ",
+                "…"
+              ]
+            }
+          },
+          "metrics": {
+            "latencyMs": 420,
+            "tokenCount": {
+              "prompt": 0,
+              "generation": 48
+            },
+            "contextScore": 0.8
+          }
+        }
+      ]
+    }
+  ]
+}

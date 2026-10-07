@@ -1,0 +1,36 @@
+# Docker build context = monorepo root (web/Dockerfile)
+
+.git
+.github
+.vscode
+.backup
+**/.cursor
+**/agent-transcripts
+**/terminals
+
+**/node_modules
+**/.next
+**/out
+**/dist
+**/*.tsbuildinfo
+**/*.vsix
+
+# No meter secretos en la imagen
+**/.env
+**/.env.*
+!**/.env.example
+
+# Carpetas ajenas al build de web
+extension
+sandbox
+docs
+tickets
+*.plan.md
+debug.log
+
+# Cachés y artefactos locales
+web/.cache
+web/public/graphs/stress.json
+web/coverage
+**/.DS_Store
+**/npm-debug.log*

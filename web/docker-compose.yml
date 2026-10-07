@@ -1,0 +1,44 @@
+# ArchTrace — self-hosted / local (Zero-Data Retention)
+#
+#   cd web && docker compose up -d --build
+#
+# Claves API: copia .env.example → .env (nunca se suben a la imagen).
+# Ollama en el host: OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile
+      args:
+        NEXT_PUBLIC_TEACHER_WS_URL: ${NEXT_PUBLIC_TEACHER_WS_URL:-ws://127.0.0.1:8080}
+        NEXT_PUBLIC_PROJECT_ROOT: ${NEXT_PUBLIC_PROJECT_ROOT:-}
+        NEXT_PUBLIC_EDITOR_SCHEME: ${NEXT_PUBLIC_EDITOR_SCHEME:-}
+    image: archtrace-web:local
+    container_name: archtrace-web
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
+      # Ollama en la máquina host (Windows/macOS Docker Desktop)
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      GROQ_API_KEY: "${GROQ_API_KEY:-}"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      GEMINI_MODEL: "${GEMINI_MODEL:-}"
+      OPENAI_MODEL: "${OPENAI_MODEL:-}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    # Sin volúmenes persistentes: el contenedor no guarda código, chats ni claves.
+    # BYOK del navegador → localStorage; claves opcionales del servidor → solo env en memoria.

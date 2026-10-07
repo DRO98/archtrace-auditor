@@ -1,0 +1,23 @@
+# dependencies / builds
+node_modules
+dist
+out
+.next
+*.vsix
+*.tsbuildinfo
+coverage
+.cache
+
+# secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# local / scratch
+.backup
+debug.log
+*.log
+.DS_Store
+Thumbs.db

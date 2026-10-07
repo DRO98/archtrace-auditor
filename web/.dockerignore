@@ -1,0 +1,13 @@
+# Usado si alguien construye con context=web (compose usa el monorepo root).
+node_modules
+.next
+out
+.cache
+.env
+.env.*
+!.env.example
+coverage
+*.tsbuildinfo
+npm-debug.log*
+.DS_Store
+public/graphs/stress.json

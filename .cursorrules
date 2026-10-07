@@ -1,0 +1,30 @@
+# ArchTrace — Rules & Guidelines for Cursor Agent
+
+## Project Overview
+ArchTrace is a dual-screen visual code tutor. It consists of:
+1. `extension/`: A lightweight VS Code extension running a local WebSocket server on port 8080.
+2. `web/`: A Next.js (App Router) + React Flow dashboard for Monitor 2.
+3. `core/`: Shared TypeScript types and message schemas.
+
+## Tech Stack & Strict Versioning
+- **Extension:** TypeScript, VS Code Extension API (`vscode`), `ws` (WebSockets), `web-tree-sitter` (AST scan, WASM grammars).
+- **Web App:** Next.js, Tailwind CSS, `@xyflow/react` (React Flow), Native WebSockets, `zustand` (UI state), `@dagrejs/dagre` (layout), `lucide-react`, `clsx` + `tailwind-merge`.
+- **Language:** Strictly TypeScript. Never use `any`. Define shared interfaces in `core/src/` and import them with `import type` from `@core/*`.
+
+## Coding Standards & Architecture
+- **Keep it modular:** Never mix WebSocket logic with UI components. Keep WebSocket handlers in dedicated hooks or managers.
+- **Performance First:** UI updates on the Canvas must handle 60fps graph rendering. Do not trigger full re-renders on minor cursor moves.
+- **Zero Heavy Dependencies in Extension:** The VS Code extension must remain ultra-lightweight (<5MB build size).
+- **BYOK First:** Never hardcode AI API keys. Always read from `localStorage` or user settings.
+
+## Communication Protocol
+Always adhere to the JSON schema for WebSockets defined in `docs/WEBSOCKET_PROTOCOL.md`:
+- Action 1: `NAVIGATE_TO_CODE` (Canvas -> IDE)
+- Action 2: `IDE_STATE_CHANGED` (IDE -> Canvas)
+- Action 3: `CLEAR_HIGHLIGHTS` (Canvas -> IDE)
+- Action 4: `REQUEST_PROJECT_MAP` (Canvas -> IDE)
+- Action 5: `PROJECT_MAP` / `PROJECT_MAP_ERROR` (IDE -> Canvas)
+
+## Workflows
+- Before creating a new file, check if a utility function already exists in `core/src/`, `web/src/lib/` or the feature's `lib/` folder.
+- Always update tests/types if you modify the WebSocket protocol.

@@ -1,0 +1,695 @@
+{
+  "version": 1,
+  "projectName": "sandbox",
+  "groups": [
+    {
+      "id": "api",
+      "label": "API Gateway",
+      "color": "sky"
+    },
+    {
+      "id": "rag",
+      "label": "RAG Pipeline",
+      "color": "violet"
+    },
+    {
+      "id": "db",
+      "label": "Database",
+      "color": "emerald"
+    },
+    {
+      "id": "llm",
+      "label": "LLM Service",
+      "color": "amber"
+    },
+    {
+      "id": "bootstrap",
+      "label": "App Bootstrap",
+      "color": "rose"
+    }
+  ],
+  "modules": [
+    {
+      "id": "src/api/routes.py",
+      "label": "API Routes",
+      "filePath": "src/api/routes.py",
+      "groupId": "api",
+      "language": "python",
+      "role": "api",
+      "subtitle": "ask_question · ingest_document",
+      "layer": 0,
+      "subBlocks": [
+        {
+          "id": "src/api/routes.py::_slug",
+          "kind": "function",
+          "name": "_slug",
+          "range": {
+            "startLine": 13,
+            "endLine": 24
+          }
+        },
+        {
+          "id": "src/api/routes.py::ingest_document",
+          "kind": "function",
+          "name": "ingest_document",
+          "range": {
+            "startLine": 27,
+            "endLine": 35
+          }
+        },
+        {
+          "id": "src/api/routes.py::ask_question",
+          "kind": "function",
+          "name": "ask_question",
+          "range": {
+            "startLine": 38,
+            "endLine": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "src/bootstrap/app.py",
+      "label": "App Bootstrap",
+      "filePath": "src/bootstrap/app.py",
+      "groupId": "bootstrap",
+      "language": "python",
+      "role": "app",
+      "subtitle": "build_pipeline · main",
+      "layer": 0,
+      "subBlocks": [
+        {
+          "id": "src/bootstrap/app.py::build_pipeline",
+          "kind": "function",
+          "name": "build_pipeline",
+          "range": {
+            "startLine": 13,
+            "endLine": 18
+          }
+        },
+        {
+          "id": "src/bootstrap/app.py::main",
+          "kind": "function",
+          "name": "main",
+          "range": {
+            "startLine": 21,
+            "endLine": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "src/db/database.py",
+      "label": "Notes Database",
+      "filePath": "src/db/database.py",
+      "groupId": "db",
+      "language": "python",
+      "role": "database",
+      "subtitle": "load · save · insert",
+      "layer": 2,
+      "subsystem": "infra",
+      "subBlocks": [
+        {
+          "id": "src/db/database.py::Note",
+          "kind": "class",
+          "name": "Note",
+          "range": {
+            "startLine": 11,
+            "endLine": 16
+          }
+        },
+        {
+          "id": "src/db/database.py::Database",
+          "kind": "class",
+          "name": "Database",
+          "range": {
+            "startLine": 19,
+            "endLine": 65
+          }
+        },
+        {
+          "id": "src/db/database.py::Database.__init__",
+          "kind": "method",
+          "name": "Database.__init__",
+          "range": {
+            "startLine": 22,
+            "endLine": 24
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.load",
+          "kind": "method",
+          "name": "Database.load",
+          "range": {
+            "startLine": 26,
+            "endLine": 32
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.save",
+          "kind": "method",
+          "name": "Database.save",
+          "range": {
+            "startLine": 34,
+            "endLine": 38
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.insert",
+          "kind": "method",
+          "name": "Database.insert",
+          "range": {
+            "startLine": 40,
+            "endLine": 43
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.update",
+          "kind": "method",
+          "name": "Database.update",
+          "range": {
+            "startLine": 45,
+            "endLine": 48
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.delete",
+          "kind": "method",
+          "name": "Database.delete",
+          "range": {
+            "startLine": 50,
+            "endLine": 53
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.get",
+          "kind": "method",
+          "name": "Database.get",
+          "range": {
+            "startLine": 55,
+            "endLine": 56
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.list_notes",
+          "kind": "method",
+          "name": "Database.list_notes",
+          "range": {
+            "startLine": 58,
+            "endLine": 62
+          },
+          "parentId": "src/db/database.py::Database"
+        },
+        {
+          "id": "src/db/database.py::Database.__len__",
+          "kind": "method",
+          "name": "Database.__len__",
+          "range": {
+            "startLine": 64,
+            "endLine": 65
+          },
+          "parentId": "src/db/database.py::Database"
+        }
+      ]
+    },
+    {
+      "id": "src/llm/prompts.py",
+      "label": "Prompts",
+      "filePath": "src/llm/prompts.py",
+      "groupId": "llm",
+      "language": "python",
+      "role": "prompt",
+      "subtitle": "build_prompt",
+      "supportOf": "src/llm/service.py",
+      "layer": 4,
+      "subsystem": "inference",
+      "subBlocks": [
+        {
+          "id": "src/llm/prompts.py::_clip",
+          "kind": "function",
+          "name": "_clip",
+          "range": {
+            "startLine": 17,
+            "endLine": 22
+          }
+        },
+        {
+          "id": "src/llm/prompts.py::build_prompt",
+          "kind": "function",
+          "name": "build_prompt",
+          "range": {
+            "startLine": 25,
+            "endLine": 37
+          }
+        },
+        {
+          "id": "src/llm/prompts.py::prompt_length",
+          "kind": "function",
+          "name": "prompt_length",
+          "range": {
+            "startLine": 40,
+            "endLine": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "src/llm/service.py",
+      "label": "LLM Service",
+      "filePath": "src/llm/service.py",
+      "groupId": "llm",
+      "language": "python",
+      "role": "ai-model",
+      "subtitle": "complete · stream_tokens",
+      "layer": 4,
+      "subsystem": "inference",
+      "subBlocks": [
+        {
+          "id": "src/llm/service.py::LlmService",
+          "kind": "class",
+          "name": "LlmService",
+          "range": {
+            "startLine": 12,
+            "endLine": 26
+          }
+        },
+        {
+          "id": "src/llm/service.py::LlmService.__init__",
+          "kind": "method",
+          "name": "LlmService.__init__",
+          "range": {
+            "startLine": 15,
+            "endLine": 16
+          },
+          "parentId": "src/llm/service.py::LlmService"
+        },
+        {
+          "id": "src/llm/service.py::LlmService.complete",
+          "kind": "method",
+          "name": "LlmService.complete",
+          "range": {
+            "startLine": 18,
+            "endLine": 26
+          },
+          "parentId": "src/llm/service.py::LlmService"
+        },
+        {
+          "id": "src/llm/service.py::stream_tokens",
+          "kind": "function",
+          "name": "stream_tokens",
+          "range": {
+            "startLine": 29,
+            "endLine": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "src/rag/chunker.py",
+      "label": "Chunker",
+      "filePath": "src/rag/chunker.py",
+      "groupId": "rag",
+      "language": "python",
+      "role": "transform",
+      "subtitle": "chunk_text",
+      "layer": 1,
+      "subsystem": "rag-core",
+      "subBlocks": [
+        {
+          "id": "src/rag/chunker.py::_collapse",
+          "kind": "function",
+          "name": "_collapse",
+          "range": {
+            "startLine": 6,
+            "endLine": 8
+          }
+        },
+        {
+          "id": "src/rag/chunker.py::chunk_text",
+          "kind": "function",
+          "name": "chunk_text",
+          "range": {
+            "startLine": 11,
+            "endLine": 35
+          }
+        },
+        {
+          "id": "src/rag/chunker.py::chunk_count",
+          "kind": "function",
+          "name": "chunk_count",
+          "range": {
+            "startLine": 38,
+            "endLine": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "src/rag/embeddings.py",
+      "label": "Embedder",
+      "filePath": "src/rag/embeddings.py",
+      "groupId": "rag",
+      "language": "python",
+      "role": "ai-model",
+      "subtitle": "embed · embed_many",
+      "supportOf": "src/rag/pipeline.py",
+      "layer": 2,
+      "subsystem": "rag-core",
+      "subBlocks": [
+        {
+          "id": "src/rag/embeddings.py::normalize",
+          "kind": "function",
+          "name": "normalize",
+          "range": {
+            "startLine": 11,
+            "endLine": 17
+          }
+        },
+        {
+          "id": "src/rag/embeddings.py::Embedder",
+          "kind": "class",
+          "name": "Embedder",
+          "range": {
+            "startLine": 20,
+            "endLine": 48
+          }
+        },
+        {
+          "id": "src/rag/embeddings.py::Embedder.__init__",
+          "kind": "method",
+          "name": "Embedder.__init__",
+          "range": {
+            "startLine": 23,
+            "endLine": 26
+          },
+          "parentId": "src/rag/embeddings.py::Embedder"
+        },
+        {
+          "id": "src/rag/embeddings.py::Embedder.embed",
+          "kind": "method",
+          "name": "Embedder.embed",
+          "range": {
+            "startLine": 28,
+            "endLine": 44
+          },
+          "parentId": "src/rag/embeddings.py::Embedder"
+        },
+        {
+          "id": "src/rag/embeddings.py::Embedder.embed_many",
+          "kind": "method",
+          "name": "Embedder.embed_many",
+          "range": {
+            "startLine": 46,
+            "endLine": 48
+          },
+          "parentId": "src/rag/embeddings.py::Embedder"
+        }
+      ]
+    },
+    {
+      "id": "src/rag/pipeline.py",
+      "label": "RAG Pipeline",
+      "filePath": "src/rag/pipeline.py",
+      "groupId": "rag",
+      "language": "python",
+      "role": "pipeline",
+      "subtitle": "ingest · retrieve · answer",
+      "layer": 3,
+      "subBlocks": [
+        {
+          "id": "src/rag/pipeline.py::RagPipeline",
+          "kind": "class",
+          "name": "RagPipeline",
+          "range": {
+            "startLine": 11,
+            "endLine": 43
+          }
+        },
+        {
+          "id": "src/rag/pipeline.py::RagPipeline.__init__",
+          "kind": "method",
+          "name": "RagPipeline.__init__",
+          "range": {
+            "startLine": 14,
+            "endLine": 17
+          },
+          "parentId": "src/rag/pipeline.py::RagPipeline"
+        },
+        {
+          "id": "src/rag/pipeline.py::RagPipeline.ingest",
+          "kind": "method",
+          "name": "RagPipeline.ingest",
+          "range": {
+            "startLine": 19,
+            "endLine": 32
+          },
+          "parentId": "src/rag/pipeline.py::RagPipeline"
+        },
+        {
+          "id": "src/rag/pipeline.py::RagPipeline.retrieve",
+          "kind": "method",
+          "name": "RagPipeline.retrieve",
+          "range": {
+            "startLine": 34,
+            "endLine": 38
+          },
+          "parentId": "src/rag/pipeline.py::RagPipeline"
+        },
+        {
+          "id": "src/rag/pipeline.py::RagPipeline.answer",
+          "kind": "method",
+          "name": "RagPipeline.answer",
+          "range": {
+            "startLine": 40,
+            "endLine": 43
+          },
+          "parentId": "src/rag/pipeline.py::RagPipeline"
+        }
+      ]
+    },
+    {
+      "id": "src/rag/vector_store.py",
+      "label": "Vector Store",
+      "filePath": "src/rag/vector_store.py",
+      "groupId": "rag",
+      "language": "python",
+      "role": "database",
+      "subtitle": "upsert · search",
+      "supportOf": "src/rag/pipeline.py",
+      "layer": 2,
+      "subsystem": "rag-core",
+      "subBlocks": [
+        {
+          "id": "src/rag/vector_store.py::VectorRecord",
+          "kind": "class",
+          "name": "VectorRecord",
+          "range": {
+            "startLine": 14,
+            "endLine": 21
+          }
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore",
+          "kind": "class",
+          "name": "VectorStore",
+          "range": {
+            "startLine": 24,
+            "endLine": 77
+          }
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.__init__",
+          "kind": "method",
+          "name": "VectorStore.__init__",
+          "range": {
+            "startLine": 27,
+            "endLine": 31
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.upsert",
+          "kind": "method",
+          "name": "VectorStore.upsert",
+          "range": {
+            "startLine": 33,
+            "endLine": 36
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.add_many",
+          "kind": "method",
+          "name": "VectorStore.add_many",
+          "range": {
+            "startLine": 38,
+            "endLine": 44
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.delete",
+          "kind": "method",
+          "name": "VectorStore.delete",
+          "range": {
+            "startLine": 46,
+            "endLine": 51
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.get",
+          "kind": "method",
+          "name": "VectorStore.get",
+          "range": {
+            "startLine": 53,
+            "endLine": 54
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.search",
+          "kind": "method",
+          "name": "VectorStore.search",
+          "range": {
+            "startLine": 56,
+            "endLine": 68
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore.__len__",
+          "kind": "method",
+          "name": "VectorStore.__len__",
+          "range": {
+            "startLine": 70,
+            "endLine": 71
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::VectorStore._require_width",
+          "kind": "method",
+          "name": "VectorStore._require_width",
+          "range": {
+            "startLine": 73,
+            "endLine": 77
+          },
+          "parentId": "src/rag/vector_store.py::VectorStore"
+        },
+        {
+          "id": "src/rag/vector_store.py::cosine_similarity",
+          "kind": "function",
+          "name": "cosine_similarity",
+          "range": {
+            "startLine": 80,
+            "endLine": 95
+          }
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "imports:src/api/routes.py:src/llm/service.py",
+      "source": "src/api/routes.py",
+      "target": "src/llm/service.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/api/routes.py:src/rag/pipeline.py",
+      "source": "src/api/routes.py",
+      "target": "src/rag/pipeline.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/bootstrap/app.py:src/llm/service.py",
+      "source": "src/bootstrap/app.py",
+      "target": "src/llm/service.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/bootstrap/app.py:src/rag/embeddings.py",
+      "source": "src/bootstrap/app.py",
+      "target": "src/rag/embeddings.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/bootstrap/app.py:src/rag/pipeline.py",
+      "source": "src/bootstrap/app.py",
+      "target": "src/rag/pipeline.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/bootstrap/app.py:src/rag/vector_store.py",
+      "source": "src/bootstrap/app.py",
+      "target": "src/rag/vector_store.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/llm/service.py:src/llm/prompts.py",
+      "source": "src/llm/service.py",
+      "target": "src/llm/prompts.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/rag/pipeline.py:src/llm/service.py",
+      "source": "src/rag/pipeline.py",
+      "target": "src/llm/service.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/rag/pipeline.py:src/rag/chunker.py",
+      "source": "src/rag/pipeline.py",
+      "target": "src/rag/chunker.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/rag/pipeline.py:src/rag/embeddings.py",
+      "source": "src/rag/pipeline.py",
+      "target": "src/rag/embeddings.py",
+      "kind": "imports",
+      "label": "imports"
+    },
+    {
+      "id": "imports:src/rag/pipeline.py:src/rag/vector_store.py",
+      "source": "src/rag/pipeline.py",
+      "target": "src/rag/vector_store.py",
+      "kind": "imports",
+      "label": "imports"
+    }
+  ],
+  "subsystems": [
+    {
+      "id": "rag-core",
+      "label": "RAG Core · Search & Retrieval",
+      "color": "violet"
+    },
+    {
+      "id": "inference",
+      "label": "Inference & Prompts",
+      "color": "amber"
+    },
+    {
+      "id": "infra",
+      "label": "Infraestructura / Runtime",
+      "color": "zinc"
+    }
+  ]
+}

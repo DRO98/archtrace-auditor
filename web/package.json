@@ -1,0 +1,47 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/**/*.test.ts scripts/**/*.test.ts",
+    "graph:build": "tsx scripts/build-sandbox-graph.ts",
+    "license:mint": "tsx scripts/mint-license.ts",
+    "graph:validate": "tsx scripts/validate-graph.ts",
+    "graph:stress": "tsx scripts/generate-stress-graph.ts",
+    "scenarios:build": "tsx scripts/build-sandbox-scenarios.ts",
+    "scenarios:validate": "tsx scripts/validate-scenarios.ts"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^3.1.1",
+    "@google/genai": "^2.24.0",
+    "@xyflow/react": "^12.12.0",
+    "clsx": "^2.1.1",
+    "html-to-image": "^1.11.13",
+    "lucide-react": "^1.48.0",
+    "lz-string": "^1.5.0",
+    "next": "16.3.6",
+    "openai": "^7.23.0",
+    "pdfjs-dist": "^6.3.289",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "simple-icons": "^16.32.0",
+    "tailwind-merge": "^3.7.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

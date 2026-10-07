@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "typecheck": "npm --prefix extension run typecheck && npm --prefix web run typecheck"
+  }
+}

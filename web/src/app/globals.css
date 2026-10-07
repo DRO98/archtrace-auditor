@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter, Inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains, "JetBrains Mono"), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-canvas: #f8fafc;      /* slate-50: fondo del lienzo */
+  --color-surface: #ffffff;
+  --color-line: #e2e8f0;        /* slate-200: bordes */
+  --color-line-strong: #cbd5e1; /* slate-300 */
+  --color-ink: #171717;         /* neutral-900: texto e iconos oscuros */
+  --color-ink-2: #525252;       /* neutral-600: texto secundario */
+  --color-ink-3: #737373;       /* neutral-500: pistas */
+  --color-accent: #0d9488;      /* solo anillos y foco (teal de marca) */
+  --color-flow: #0d9488;
+  --color-primary: #0d9488;     /* teal-600: acción principal (Generar lección) */
+  --color-primary-strong: #0f766e; /* teal-700: fondo del degradado */
+
+  /* Superficies del dashboard (Pipelines, API, Ajustes y navegación global): tema claro. */
+  --color-app: #f8fafc;          /* fondo general (slate-50) */
+  --color-app-2: #f1f5f9;        /* fondos hundidos: pestañas, chips, bloques de código (slate-100) */
+  --color-panel: #ffffff;        /* tarjetas, paneles e inputs */
+  --color-panel-2: #f1f5f9;      /* hover / elevado */
+  --color-edge: #e2e8f0;         /* bordes finos (slate-200) */
+  --color-edge-strong: #cbd5e1;  /* slate-300 */
+  --color-fg: #0f172a;           /* texto principal (slate-900) */
+  --color-fg-2: #475569;         /* texto secundario (slate-600) */
+  --color-fg-3: #64748b;         /* pistas y metadatos (slate-500) */
+  --color-brand: #0d9488;        /* Nordic Teal: acento de marca de ArchTrace */
+  --color-brand-strong: #0f766e;
+  --color-brand-soft: #0f766e;   /* texto/iconos de acento sobre fondo claro (AA sobre blanco) */
+  --color-live: #10b981;         /* esmeralda: estados Conectado / Activo */
+  --color-drift: #f59e0b;        /* ámbar: alertas de drift */
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.react-flow {
+  --xy-background-color: var(--color-canvas);
+  --xy-edge-stroke: #a3a3a3;
+  --xy-edge-stroke-selected: var(--color-ink);
+  --xy-handle-background-color: #a3a3a3;
+  --xy-handle-border-color: #ffffff;
+}
+
+.react-flow__node {
+  cursor: default;
+}
+
+/* Tráfico de la simulación: el trazo discontinuo avanza un ciclo (2 × "10 8") por vuelta. */
+@keyframes sim-flow {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+
+/* Nodo del paso activo: el anillo teal respira sin cambiar el zoom de la cámara. */
+@keyframes step-node-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px #0d9488,
+      0 20px 25px -5px rgb(13 148 136 / 0.28),
+      0 8px 10px -6px rgb(13 148 136 / 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px #2dd4bf,
+      0 0 28px 6px rgb(13 148 136 / 0.45),
+      0 20px 25px -5px rgb(13 148 136 / 0.2);
+  }
+}
+
+/* "Destacar en lienzo": resplandor breve sobre el anillo teal del nodo. */
+@keyframes node-spotlight {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px #0d9488,
+      0 20px 25px -5px rgb(13 148 136 / 0.3),
+      0 8px 10px -6px rgb(13 148 136 / 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px #2dd4bf,
+      0 0 36px 10px rgb(13 148 136 / 0.5),
+      0 20px 25px -5px rgb(13 148 136 / 0.25);
+  }
+}
+
+.node-spotlight {
+  animation: node-spotlight 0.9s ease-in-out 2;
+}
+
+.step-node-active {
+  animation: step-node-glow 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* Vistas del dashboard: controles nativos (inputs, scroll, selects) en modo claro. */
+.theme-light {
+  color-scheme: light;
+  scrollbar-color: var(--color-edge-strong) transparent;
+}
+
+/* Scroll discreto para bloques de código y listas densas del panel derecho. */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/* Modo presentación: tipografía legible en proyector / pantalla compartida. */
+[data-presentation] .react-flow__node h3 {
+  font-size: 17px;
+  line-height: 1.35rem;
+}
+[data-presentation] .react-flow__node p {
+  font-size: 13px;
+  line-height: 1.1rem;
+  color: var(--color-ink, #171717);
+}
+[data-presentation] .react-flow__edge-text,
+[data-presentation] .react-flow__edge-textwrapper {
+  font-size: 13px;
+}
